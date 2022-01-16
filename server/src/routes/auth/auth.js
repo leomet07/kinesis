@@ -11,6 +11,7 @@ router.post("/register", async (req, res, next) => {
 	try {
 		const validation = registerValidation(req.body);
 		if ("error" in validation) {
+			res.status(400);
 			throw new Error(validation.error.details[0].message);
 		}
 
@@ -20,7 +21,8 @@ router.post("/register", async (req, res, next) => {
 		});
 
 		if (emailExist) {
-			throw new Error("Email already exists");
+			res.status(405);
+			throw new Error("Email already exists!");
 		}
 
 		// Hash the password
@@ -42,6 +44,7 @@ router.post("/register", async (req, res, next) => {
 			},
 			process.env.ACCESS_TOKEN_SECRET
 		);
+		res.status(200);
 		res.header("auth-token", token).send({
 			token: token,
 			logged_in: true,
@@ -58,6 +61,7 @@ router.post("/login", async (req, res, next) => {
 	try {
 		const validation = loginValidation(req.body);
 		if ("error" in validation) {
+			res.status(400);
 			throw new Error(validation.error.details[0].message);
 		}
 
@@ -67,7 +71,8 @@ router.post("/login", async (req, res, next) => {
 		});
 
 		if (!user) {
-			throw new Error("User doesn't exist");
+			res.status(404);
+			throw new Error("User doesn't exist.");
 		}
 
 		// check password status
@@ -78,7 +83,8 @@ router.post("/login", async (req, res, next) => {
 		);
 
 		if (!valid_pass) {
-			throw new Error("Invalid password");
+			res.status(400);
+			throw new Error("Invalid password.");
 		}
 
 		// create and assaign a jwt
@@ -88,6 +94,7 @@ router.post("/login", async (req, res, next) => {
 			},
 			process.env.ACCESS_TOKEN_SECRET
 		);
+		res.status(200);
 		res.header("auth-token", token).json({
 			token: token,
 			logged_in: true,
@@ -109,8 +116,10 @@ router.get("/verify/:id", async (req, res, next) => {
 
 		const user = await User.findById(uid);
 		if (!user) {
-			throw new Error("User with that token doesn't exist");
+			res.status(404);
+			throw new Error("User with that token doesn't exist.");
 		}
+		res.status(200);
 		res.json({
 			valid: true,
 			isAdmin: user.isAdmin,

@@ -59,14 +59,15 @@ router.post("/occupy_point", async (req, res, next) => {
 		});
 		console.log(occupied_points);
 		if (occupied_points.length > 0) {
-			throw new Error("A point is already occupied");
+			res.status(405);
+			throw new Error("You already occupy a point!");
 		}
 
 		const point = await Point.findById(point_id);
 
 		if (point.current_occupied_user_id) {
-			res.status(403);
-			throw new Error("Point is already occupied");
+			res.status(405);
+			throw new Error("That point is already occupied!");
 		}
 		const now = Date.now();
 		const toUpdate = {
@@ -95,13 +96,13 @@ router.post("/unoccupy_point", async (req, res, next) => {
 		const point = await Point.findById(point_id);
 
 		if (!point.current_occupied_user_id) {
-			res.status(403);
-			throw new Error("Can't unoccupy an unoccupied point");
+			res.status(405);
+			throw new Error("Can't vacate an empty point");
 		}
 
 		if (point.current_occupied_user_id != user_id) {
-			res.status(403);
-			throw new Error("Can't unoccupy someone elses point");
+			res.status(405);
+			throw new Error("Can't vacate someone else's point");
 		}
 
 		const toUpdate = {
@@ -125,6 +126,7 @@ router.post("/unoccupy_point", async (req, res, next) => {
 		});
 		const newStay = await proposedstay.save();
 
+		res.status(200);
 		res.json({ success: true, updated: newPoint, stay: newStay });
 	} catch (error) {
 		next(error);
@@ -257,8 +259,6 @@ async function handlePositiveCovid(user) {
 		};
 		console.log("emailParams: ", emailParams);
 		await sendMail(emailParams);
-
-		// console.log(user); // TODO: contact this user
 	}
 }
 // calculate distance in feet between points using the pythagorean theorem
