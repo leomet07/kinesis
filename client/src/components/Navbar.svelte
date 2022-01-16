@@ -1,6 +1,12 @@
 <script>
 	import { Link } from "svelte-routing";
-	import { validauthtoken, circles_data, uid, owned_point } from "../store";
+	import {
+		validauthtoken,
+		circles_data,
+		uid,
+		owned_point,
+		whole_user,
+	} from "../store";
 
 	async function signout() {
 		localStorage.setItem("auth-token", "");
@@ -8,6 +14,7 @@
 		$circles_data = [];
 		$uid = "";
 		$owned_point = {};
+		$whole_user = {};
 	}
 </script>
 

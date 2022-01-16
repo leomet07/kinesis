@@ -4,7 +4,7 @@
 	import Home from "./routes/Home.svelte";
 	import About from "./routes/About.svelte";
 	import Login from "./routes/Login.svelte";
-	import { validauthtoken, uid } from "./store";
+	import { validauthtoken, uid, whole_user } from "./store";
 	import { onMount } from "svelte";
 	import Navbar from "./components/Navbar.svelte";
 	import Register from "./routes/Register.svelte";
@@ -40,6 +40,8 @@
 			if (rjson.valid) {
 				$uid = String(rjson.uid);
 				$validauthtoken = auth_token;
+				$whole_user = rjson.user;
+				console.log("Whole user: ", $whole_user);
 				console.log("Login saved!!", rjson.uid);
 			}
 		}

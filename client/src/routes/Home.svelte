@@ -1,6 +1,12 @@
 <script>
-	import { validauthtoken, circles_data, uid, owned_point } from "../store";
-	import { onMount } from "svelte";
+	import {
+		validauthtoken,
+		circles_data,
+		uid,
+		owned_point,
+		whole_user,
+	} from "../store";
+	import { hasContext, onMount } from "svelte";
 
 	let current_circle_index = 0;
 	// let owned_point = {};
@@ -17,29 +23,32 @@
 			if (v) {
 				await get_current_occupication();
 				canvas.style.display = "block";
-				await init_canvas();
-
-				const existing = $circles_data.findIndex(
-					(v) => v._id == update_param
-				);
-				if (existing > -1) {
-					console.log("made it");
-					if ($circles_data[existing].current_occupied_user_id) {
-						console.log("Circle is occupied, was it me?");
-						if (
-							$circles_data[existing].current_occupied_user_id ==
-							$uid
-						) {
+				if (!$whole_user.hasCovid) {
+					await init_canvas();
+					const existing = $circles_data.findIndex(
+						(v) => v._id == update_param
+					);
+					if (existing > -1) {
+						console.log("made it");
+						if ($circles_data[existing].current_occupied_user_id) {
+							console.log("Circle is occupied, was it me?");
+							if (
+								$circles_data[existing]
+									.current_occupied_user_id == $uid
+							) {
+								current_circle_index = existing;
+								await unoccupy();
+								localStorage.setItem("update_param", "");
+							}
+						} else {
+							console.log("Circle is not occupied");
 							current_circle_index = existing;
-							await unoccupy();
+							await occupy();
 							localStorage.setItem("update_param", "");
 						}
-					} else {
-						console.log("Circle is not occupied");
-						current_circle_index = existing;
-						await occupy();
-						localStorage.setItem("update_param", "");
 					}
+				} else {
+					canvas.style.display = "none";
 				}
 			} else {
 				canvas.style.display = "none";
@@ -248,12 +257,19 @@
 				"auth-token": $validauthtoken,
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ covid_status: true }),
+			body: JSON.stringify({ covid_status: !$whole_user.hasCovid }),
 		});
 
 		const rjson = await r.json();
 		if (rjson.updated_user) {
 			console.log("Covid Reported");
+			$whole_user = rjson.updated_user;
+			let canvas = document.querySelector("#map");
+			if ($whole_user.hasCovid) {
+				canvas.style.display = "none";
+			} else {
+				canvas.style.display = "block";
+			}
 		}
 	}
 </script>
@@ -263,29 +279,52 @@
 	{#if $validauthtoken}
 		<div>
 			<h2 style="color:green">Logged in!</h2>
-			<button id="report_covid" on:click={reportCovid}
-				>Report Covid</button
-			>
-			{#if Object.keys($owned_point).length !== 0}
-				<div class="seat_info">
+
+			{#if $whole_user.hasCovid}
+				<button id="report_covid" on:click={reportCovid}
+					>I have a negative covid test!</button
+				>
+				<div>
+					<h2>Oh no! Feel better!</h2>
 					<h2>
-						You are currently occupying a seat in the resturant!
+						For guidence, visit this <a
+							href="https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html"
+							target="_blank">CDC page.</a
+						>
 					</h2>
 					<h2>
-						Occupied since: {new Date(
-							$owned_point.occupied_since
-						).toLocaleString()}
+						You may continue using Kinesis after a negative covid
+						test and your recovery!
 					</h2>
-					<button id="leave_current" on:click={leaveCurrent}
-						>Leave current point</button
-					>
 				</div>
 			{:else}
-				<div class="seat_info">
-					<h2>
-						You are not currently occupying a seat! Feel free to
-						book one!
-					</h2>
+				<div>
+					<button id="report_covid" on:click={reportCovid}
+						>I have a positive covid test!</button
+					>
+					{#if Object.keys($owned_point).length !== 0}
+						<div class="seat_info">
+							<h2>
+								You are currently occupying a seat in the
+								resturant!
+							</h2>
+							<h2>
+								Occupied since: {new Date(
+									$owned_point.occupied_since
+								).toLocaleString()}
+							</h2>
+							<button id="leave_current" on:click={leaveCurrent}
+								>Leave current seat</button
+							>
+						</div>
+					{:else}
+						<div class="seat_info">
+							<h2>
+								You are not currently occupying a seat! Feel
+								free to book one!
+							</h2>
+						</div>
+					{/if}
 				</div>
 			{/if}
 		</div>
