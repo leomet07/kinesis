@@ -269,6 +269,7 @@
 				canvas.style.display = "none";
 			} else {
 				canvas.style.display = "block";
+				await init_canvas();
 			}
 		}
 	}
@@ -332,11 +333,11 @@
 		<h2 class="block">
 			<span style="color:red">Not logged in!</span>
 		</h2>
+
 		<h3>
-			Since you aren't logged in, you won't be able to register where
-			you're located or report your covid status!.
+			What's the point of using Kinesis without an account? (you won't be
+			able to log where you're located or report your covid status!)
 		</h3>
-		<h3>So, what's the point of using Kinesis without an account?</h3>
 	{/if}
 
 	<canvas id="map" width="2000px" height="1000px" />

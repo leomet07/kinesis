@@ -44,6 +44,7 @@
 		justify-content: space-around;
 		padding-left: 20vw;
 		padding-right: 20vw;
+		margin-top: 5px;
 	}
 	#logo {
 		height: 25px;
