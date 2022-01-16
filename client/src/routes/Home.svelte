@@ -87,90 +87,90 @@
 		let img = new Image();
 		img.src = "/img/floorplan.jpg";
 
-		img.onload = function () {
+		img.onload = async function () {
 			ctx.drawImage(img, 0, 0);
-		};
-
-		let circles = [];
-		// let circles_data = [
-		// 	{ x: 0, y: 0, occupied: true },
-		// 	{ x: 1000, y: 500, occupied: false },
-		// ];
-		// let circles_data = [];
-		const r = await fetch(window.BASE_URL + "/api/db/get_points", {
-			method: "GET",
-			headers: {
-				"auth-token": $validauthtoken,
-			},
-		});
-
-		const rjson = (await r.json()).points;
-		$circles_data = rjson;
-
-		circles_data.subscribe((new_circles_data) => {
-			// ctx.clearRect(0, 0, canvas.width, canvas.height);
-			new_circles_data.forEach((p) => {
-				let circle = new Path2D();
-
-				circle.arc(p.x, p.y - radius / 2, radius, 0, 2 * Math.PI);
-				circles.push(circle);
-				ctx.beginPath();
-				let modal = document.getElementById("modal");
-				if (p.current_occupied_user_id) {
-					ctx.fillStyle = "#FF2929";
-					// modal.style.backgroundColor = "#FF2929";
-				} else {
-					ctx.fillStyle = "#87D03A";
-					// modal.style.backgroundColor = "#87D03A";
-				}
-				ctx.fill(circle);
-				ctx.stroke();
+			let circles = [];
+			// let circles_data = [
+			// 	{ x: 0, y: 0, occupied: true },
+			// 	{ x: 1000, y: 500, occupied: false },
+			// ];
+			// let circles_data = [];
+			const r = await fetch(window.BASE_URL + "/api/db/get_points", {
+				method: "GET",
+				headers: {
+					"auth-token": $validauthtoken,
+				},
 			});
-		});
-		canvas.addEventListener(
-			"click",
-			function (event) {
-				let rect = canvas.getBoundingClientRect();
-				let x = event.pageX - rect.left;
-				let y = event.pageY - rect.top;
-				let wasClicked = false;
-				for (let i = 0; i < $circles_data.length; i++) {
-					const cmath = $circles_data[i];
 
-					if (
-						checkIfinCircle(
-							x,
-							y,
-							cmath.x,
-							cmath.y - radius / 2,
-							radius,
-							rect
-						)
-					) {
-						console.log("clicked on circle number ", i);
-						current_circle_index = i;
-						let modal = document.getElementById("modal");
-						const wratio = 2000 / rect.width;
-						const hratio = 1000 / rect.height;
-						modal.style.top = rect.top + cmath.y / wratio + "px";
-						modal.style.left =
-							rect.left +
-							cmath.x / hratio +
-							radius * 2 +
-							50 +
-							"px";
-						open_modal();
-						wasClicked = true;
-						break;
+			const rjson = (await r.json()).points;
+			$circles_data = rjson;
+
+			circles_data.subscribe((new_circles_data) => {
+				// ctx.clearRect(0, 0, canvas.width, canvas.height);
+				new_circles_data.forEach((p) => {
+					let circle = new Path2D();
+
+					circle.arc(p.x, p.y - radius / 2, radius, 0, 2 * Math.PI);
+					circles.push(circle);
+					ctx.beginPath();
+					let modal = document.getElementById("modal");
+					if (p.current_occupied_user_id) {
+						ctx.fillStyle = "#FF2929";
+						// modal.style.backgroundColor = "#FF2929";
+					} else {
+						ctx.fillStyle = "#87D03A";
+						// modal.style.backgroundColor = "#87D03A";
 					}
-				}
-				if (!wasClicked) {
-					close_modal();
-				}
-			},
+					ctx.fill(circle);
+					ctx.stroke();
+				});
+			});
+			canvas.addEventListener(
+				"click",
+				function (event) {
+					let rect = canvas.getBoundingClientRect();
+					let x = event.pageX - rect.left;
+					let y = event.pageY - rect.top;
+					let wasClicked = false;
+					for (let i = 0; i < $circles_data.length; i++) {
+						const cmath = $circles_data[i];
 
-			false
-		);
+						if (
+							checkIfinCircle(
+								x,
+								y,
+								cmath.x,
+								cmath.y - radius / 2,
+								radius,
+								rect
+							)
+						) {
+							console.log("clicked on circle number ", i);
+							current_circle_index = i;
+							let modal = document.getElementById("modal");
+							const wratio = 2000 / rect.width;
+							const hratio = 1000 / rect.height;
+							modal.style.top =
+								rect.top + cmath.y / wratio + "px";
+							modal.style.left =
+								rect.left +
+								cmath.x / hratio +
+								radius * 2 +
+								50 +
+								"px";
+							open_modal();
+							wasClicked = true;
+							break;
+						}
+					}
+					if (!wasClicked) {
+						close_modal();
+					}
+				},
+
+				false
+			);
+		};
 	}
 
 	function checkIfinCircle(x, y, cx, cy, r, rect) {
