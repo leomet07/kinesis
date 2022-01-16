@@ -32,7 +32,7 @@
 		} else {
 			if (r.status > 400) {
 				let err_msg = document.createElement("p");
-				err_msg.style.color = "red";
+				err_msg.style.color = "#FF2929";
 				err_msg.innerHTML = `Error ${r.status}: ${rjson.message}`;
 				err_msg.id = "error";
 				document.getElementsByTagName("main")[0].appendChild(err_msg);
