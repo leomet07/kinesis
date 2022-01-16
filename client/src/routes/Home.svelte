@@ -1,11 +1,10 @@
 <script>
 	import { validauthtoken, circles_data, uid, owned_point } from "../store";
 	import { onMount } from "svelte";
-	import { Link } from "svelte-routing";
 
 	let current_circle_index = 0;
 	// let owned_point = {};
-
+	const radius = 40;
 	onMount(async () => {
 		validauthtoken.subscribe(async (v) => {
 			let canvas = document.querySelector("#map");
@@ -46,7 +45,7 @@
 		canvas.height = canvas.width * heightRatio;
 		console.log("Init height : ", canvas.height, canvas.width);
 		let ctx = canvas.getContext("2d");
-		const radius = 50;
+
 		let img = new Image();
 		img.src = "/img/background.png";
 		ctx.drawImage(img, 0, 0);
@@ -103,7 +102,7 @@
 							y,
 							cmath.x,
 							cmath.y - radius / 2,
-							50,
+							radius,
 							rect
 						)
 					) {
