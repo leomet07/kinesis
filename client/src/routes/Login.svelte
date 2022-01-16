@@ -7,7 +7,7 @@
 
 		console.log({ email, password });
 
-		const r = await fetch("http://127.0.0.1:4444/api/auth/login", {
+		const r = await fetch(window.BASE_URL + "/api/auth/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

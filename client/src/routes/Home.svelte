@@ -20,7 +20,7 @@
 
 	async function get_current_occupication() {
 		const body = { current_occupied_user_id: $uid };
-		const r = await fetch("http://127.0.0.1:4444/api/db/get_points", {
+		const r = await fetch(window.BASE_URL + "/api/db/get_points", {
 			method: "POST",
 			headers: {
 				"auth-token": $validauthtoken,
@@ -56,7 +56,7 @@
 		// 	{ x: 1000, y: 500, occupied: false },
 		// ];
 		// let circles_data = [];
-		const r = await fetch("http://127.0.0.1:4444/api/db/get_points", {
+		const r = await fetch(window.BASE_URL + "/api/db/get_points", {
 			method: "GET",
 			headers: {
 				"auth-token": $validauthtoken,
@@ -146,7 +146,7 @@
 		console.log("Occupy");
 		const point = $circles_data[current_circle_index];
 		console.log(point);
-		const r = await fetch("http://127.0.0.1:4444/api/db/occupy_point", {
+		const r = await fetch(window.BASE_URL + "/api/db/occupy_point", {
 			method: "POST",
 			headers: {
 				"auth-token": $validauthtoken,
@@ -166,7 +166,7 @@
 	async function unoccupy() {
 		console.log("Unoccupy");
 		const point = $circles_data[current_circle_index];
-		const r = await fetch("http://127.0.0.1:4444/api/db/unoccupy_point", {
+		const r = await fetch(window.BASE_URL + "/api/db/unoccupy_point", {
 			method: "POST",
 			headers: {
 				"auth-token": $validauthtoken,

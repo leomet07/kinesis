@@ -8,6 +8,18 @@
 	import { onMount } from "svelte";
 	export let url = "";
 
+	window.BASE_URL = "https://kinesisbackend.herokuapp.com";
+	window.dev = false;
+	if (
+		window.location.hostname == "localhost" ||
+		window.location.hostname == "127.0.0.1"
+	) {
+		window.dev = true;
+		window.BASE_URL = "http://127.0.0.1:4444";
+	}
+	console.log(window.BASE_URL);
+	console.log("window.dev: ", window.dev);
+
 	async function signout() {
 		localStorage.setItem("auth-token", "");
 		$validauthtoken = "";
@@ -20,7 +32,8 @@
 		if (auth_token) {
 			console.log("cached auth token", auth_token);
 			const r = await fetch(
-				"http://127.0.0.1:4444/api/auth/verify/" +
+				window.BASE_URL +
+					"/api/auth/verify/" +
 					encodeURIComponent(auth_token),
 				{
 					method: "GET",
