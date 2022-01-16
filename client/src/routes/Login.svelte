@@ -1,6 +1,9 @@
 <script>
 	import { validauthtoken } from "../store";
 	async function loginHandler() {
+		if (document.getElementById("error"))  // immediately remove any error messages from previous attempts
+			document.getElementById("error").remove()
+
 		console.log("Login!");
 		const email = document.getElementById("login_email").value;
 		const password = document.getElementById("login_password").value;
@@ -17,6 +20,7 @@
 				password,
 			}),
 		});
+		console.log(r.status);
 		const rjson = await r.json();
 
 		console.log(rjson);
@@ -25,6 +29,14 @@
 			$validauthtoken = rjson.token;
 			localStorage.setItem("auth-token", $validauthtoken);
 			window.location.replace("/");
+		} else {
+			if (r.status > 400) {
+				let err_msg = document.createElement("p");
+				err_msg.style.color = "red";
+				err_msg.innerHTML = `Error ${r.status}: ${rjson.message}`;
+				err_msg.id = "error";
+				document.getElementsByTagName("main")[0].appendChild(err_msg);
+			}
 		}
 	}
 	async function signout() {
