@@ -296,7 +296,7 @@
 				<div>
 					<h2>Oh no! Feel better!</h2>
 					<h2>
-						For guidence, visit this <a
+						For guidance, visit this <a
 							href="https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html"
 							target="_blank">CDC page.</a
 						>
