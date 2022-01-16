@@ -52,6 +52,16 @@ router.post("/occupy_point", async (req, res, next) => {
 		const point_id = req.body.point_id;
 		const user_id = req.user._id;
 		console.log({ user_id, point_id });
+
+		// Check if user is already occupying a seat
+		const occupied_points = await get_points({
+			current_occupied_user_id: user_id,
+		});
+		console.log(occupied_points);
+		if (occupied_points.length > 0) {
+			throw new Error("A point is already occupied");
+		}
+
 		const point = await Point.findById(point_id);
 
 		if (point.current_occupied_user_id) {

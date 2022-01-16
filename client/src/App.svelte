@@ -4,7 +4,7 @@
 	import Home from "./routes/Home.svelte";
 	import About from "./routes/About.svelte";
 	import Login from "./routes/Login.svelte";
-	import { validauthtoken, circles_data } from "./store";
+	import { validauthtoken, circles_data, uid } from "./store";
 	import { onMount } from "svelte";
 	export let url = "";
 
@@ -27,8 +27,9 @@
 			const rjson = await r.json();
 
 			if (rjson.valid) {
+				$uid = String(rjson.uid);
 				$validauthtoken = auth_token;
-				console.log("Login saved!!");
+				console.log("Login saved!!", rjson.uid);
 			}
 		}
 	});

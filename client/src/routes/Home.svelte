@@ -1,16 +1,37 @@
 <script>
-	import { validauthtoken, circles_data } from "../store";
+	import { validauthtoken, circles_data, uid } from "../store";
 	import { onMount } from "svelte";
 	import { Link } from "svelte-routing";
 
 	let current_circle_index = 0;
+	let owned_point = {};
+
 	onMount(async () => {
-		validauthtoken.subscribe((v) => {
+		validauthtoken.subscribe(async (v) => {
 			if (v) {
+				await get_current_occupication();
 				init_canvas();
 			}
 		});
 	});
+
+	async function get_current_occupication() {
+		const body = { current_occupied_user_id: $uid };
+		const r = await fetch("http://127.0.0.1:4444/api/db/get_points", {
+			method: "POST",
+			headers: {
+				"auth-token": $validauthtoken,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+		});
+		const rjson = await r.json();
+		console.log(rjson);
+		if (rjson.points?.length > 0) {
+			console.log("Has a registered point");
+			owned_point = rjson.points[0];
+		}
+	}
 
 	async function init_canvas() {
 		let canvas = document.querySelector("#bigimg");
@@ -94,13 +115,13 @@
 							radius * 2 +
 							10 +
 							"px";
-						modal.style.display = "block";
+						open_modal();
 						wasClicked = true;
 						break;
 					}
 				}
 				if (!wasClicked) {
-					modal.style.display = "none";
+					close_modal();
 				}
 			},
 
@@ -135,7 +156,9 @@
 			const newpoint = rjson.updated;
 			$circles_data[current_circle_index] = newpoint;
 			$circles_data = $circles_data;
+			owned_point = newpoint;
 		}
+		close_modal();
 	}
 	async function unoccupy() {
 		console.log("Unoccupy");
@@ -155,6 +178,26 @@
 			$circles_data = $circles_data;
 			console.log(rjson.stay);
 		}
+		owned_point = {};
+		close_modal();
+	}
+
+	async function leaveCurrent() {
+		current_circle_index = $circles_data.findIndex(
+			(v) => v._id == owned_point._id
+		);
+
+		await unoccupy();
+		close_modal();
+	}
+
+	function close_modal() {
+		let modal = document.getElementById("modal");
+		modal.style.display = "none";
+	}
+	function open_modal() {
+		let modal = document.getElementById("modal");
+		modal.style.display = "block";
 	}
 </script>
 
@@ -174,6 +217,19 @@
 		</p>
 		<Link to="/login">login</Link>
 	{/if}
+
+	{#if Object.keys(owned_point).length !== 0}
+		<div>
+			<h2>Your occupied point: {owned_point._id}</h2>
+			<h2>
+				Occupied since: {new Date(
+					owned_point.occupied_since
+				).toUTCString()}
+			</h2>
+			<button on:click={leaveCurrent}>Leave current point</button>
+		</div>
+	{/if}
+
 	<canvas id="bigimg" width="2000px" height="1000px" />
 	<div id="modal">
 		<div class="modal-content">
