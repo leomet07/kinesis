@@ -9,7 +9,6 @@
 		const password = document.getElementById("login_password").value;
 
 		console.log({ email, password });
-
 		const r = await fetch(window.BASE_URL + "/api/auth/login", {
 			method: "POST",
 			headers: {
@@ -45,13 +44,25 @@
 	}
 </script>
 
-<main>
+<main id="login">
 	{#if !$validauthtoken}
-		<h2>Login</h2>
-		<form on:submit|preventDefault={loginHandler}>
-			<input type="email" id="login_email" placeholder="email" />
-			<input type="password" id="login_password" placeholder="password" />
-			<input type="submit" />
+		<h2 class="title">Login</h2>
+		<form id="login_form" on:submit|preventDefault={loginHandler}>
+			<input
+				class="text_input"
+				type="email"
+				id="login_email"
+				placeholder="email"
+			/>
+
+			<input
+				class="text_input"
+				type="password"
+				id="login_password"
+				placeholder="password"
+			/>
+
+			<input type="submit" id="submit" value="Log in" />
 		</form>
 	{:else}
 		<h1>You are logged in!</h1>
@@ -61,9 +72,33 @@
 </main>
 
 <style>
+	#login {
+		text-align: center;
+	}
+	#login_form {
+		display: flex;
+		flex-direction: column;
+		width: 80vw;
+		margin: auto;
+		align-items: center;
+	}
+
+	#login_form input #submit {
+		width: 70px;
+	}
+	.text_input {
+		font-size: 18px;
+		border: 1px solid black;
+		background-color: white;
+		border-radius: 5px;
+	}
 	#signout {
 		color: blue;
 		text-decoration: underline;
 		text-decoration-color: blue;
+	}
+
+	.title {
+		text-align: center;
 	}
 </style>

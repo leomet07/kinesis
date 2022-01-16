@@ -4,7 +4,7 @@
 
 	let current_circle_index = 0;
 	// let owned_point = {};
-	const radius = 40;
+	const radius = 25;
 	onMount(async () => {
 		const search_str = window.location.search;
 		console.log("Early check", localStorage.getItem("update_param"));
@@ -77,7 +77,10 @@
 
 		let img = new Image();
 		img.src = "/img/floorplan.jpg";
-		ctx.drawImage(img, 0, 0);
+
+		img.onload = function () {
+			ctx.drawImage(img, 0, 0);
+		};
 
 		let circles = [];
 		// let circles_data = [
@@ -96,7 +99,7 @@
 		$circles_data = rjson;
 
 		circles_data.subscribe((new_circles_data) => {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			// ctx.clearRect(0, 0, canvas.width, canvas.height);
 			new_circles_data.forEach((p) => {
 				let circle = new Path2D();
 
@@ -145,7 +148,7 @@
 							rect.left +
 							cmath.x / hratio +
 							radius * 2 +
-							10 +
+							50 +
 							"px";
 						open_modal();
 						wasClicked = true;

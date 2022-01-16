@@ -36,7 +36,6 @@
 	}
 	#logo {
 		height: 25px;
-		margin-left: 15px;
 	}
 	#navbar .link {
 		text-decoration: underline;
