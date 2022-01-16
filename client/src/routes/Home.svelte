@@ -1,16 +1,20 @@
 <script>
-	import { validauthtoken, circles_data, uid } from "../store";
+	import { validauthtoken, circles_data, uid, owned_point } from "../store";
 	import { onMount } from "svelte";
 	import { Link } from "svelte-routing";
 
 	let current_circle_index = 0;
-	let owned_point = {};
+	// let owned_point = {};
 
 	onMount(async () => {
 		validauthtoken.subscribe(async (v) => {
+			let canvas = document.querySelector("#map");
 			if (v) {
 				await get_current_occupication();
+				canvas.style.display = "block";
 				init_canvas();
+			} else {
+				canvas.style.display = "none";
 			}
 		});
 	});
@@ -29,12 +33,12 @@
 		console.log(rjson);
 		if (rjson.points?.length > 0) {
 			console.log("Has a registered point");
-			owned_point = rjson.points[0];
+			$owned_point = rjson.points[0];
 		}
 	}
 
 	async function init_canvas() {
-		let canvas = document.querySelector("#bigimg");
+		let canvas = document.querySelector("#map");
 		if (!canvas) {
 			return;
 		}
@@ -156,7 +160,7 @@
 			const newpoint = rjson.updated;
 			$circles_data[current_circle_index] = newpoint;
 			$circles_data = $circles_data;
-			owned_point = newpoint;
+			$owned_point = newpoint;
 		}
 		close_modal();
 	}
@@ -178,13 +182,13 @@
 			$circles_data = $circles_data;
 			console.log(rjson.stay);
 		}
-		owned_point = {};
+		$owned_point = {};
 		close_modal();
 	}
 
 	async function leaveCurrent() {
 		current_circle_index = $circles_data.findIndex(
-			(v) => v._id == owned_point._id
+			(v) => v._id == $owned_point._id
 		);
 
 		await unoccupy();
@@ -201,45 +205,55 @@
 	}
 </script>
 
-<main>
-	<h1>Home</h1>
+<main id="home">
+	<h1 class="title">Home</h1>
 	{#if $validauthtoken}
-		<div class="block">
-			You are: <p style="color:green">logged in!</p>
+		<div>
+			<h2 class="block">
+				<span style="color:green">Logged in!</span>
+			</h2>
+			{#if Object.keys($owned_point).length !== 0}
+				<div>
+					<h2>You are occupying a seat!</h2>
+					<h2>
+						Occupied since: {new Date(
+							$owned_point.occupied_since
+						).toLocaleString()}
+					</h2>
+					<button id="leave_current" on:click={leaveCurrent}
+						>Leave current point</button
+					>
+				</div>
+			{/if}
 		</div>
 	{:else}
-		<div class="block">
-			You are: <p style="color:red">not logged in!</p>
-		</div>
-		<p>
+		<h2 class="block">
+			<span style="color:red">Not logged in!</span>
+		</h2>
+		<h3>
 			Since you are not logged in, you won't be able to register where
 			you've been.
-		</p>
-		<Link to="/login">login</Link>
+		</h3>
 	{/if}
 
-	{#if Object.keys(owned_point).length !== 0}
-		<div>
-			<h2>Your occupied point: {owned_point._id}</h2>
-			<h2>
-				Occupied since: {new Date(
-					owned_point.occupied_since
-				).toUTCString()}
-			</h2>
-			<button on:click={leaveCurrent}>Leave current point</button>
-		</div>
-	{/if}
-
-	<canvas id="bigimg" width="2000px" height="1000px" />
+	<canvas id="map" width="2000px" height="1000px" />
 	<div id="modal">
 		<div class="modal-content">
 			{#if $circles_data}
 				{#if $circles_data[current_circle_index]?.current_occupied_user_id}
 					<p>Occupied</p>
-					<button on:click={unoccupy}>Leave</button>
+					{#if $circles_data[current_circle_index]?._id == $owned_point._id || Object.keys($owned_point).length == 0}
+						<button class="small_button" on:click={unoccupy}
+							>Leave</button
+						>
+					{/if}
 				{:else}
 					<p>Open</p>
-					<button on:click={occupy}>Occupy</button>
+					{#if $circles_data[current_circle_index]?._id == $owned_point._id || Object.keys($owned_point).length == 0}
+						<button class="small_button" on:click={occupy}
+							>Occupy</button
+						>
+					{/if}
 				{/if}
 			{/if}
 		</div>
@@ -247,7 +261,10 @@
 </main>
 
 <style>
-	#bigimg {
+	#home {
+		text-align: center;
+	}
+	#map {
 		margin: none;
 		border: 1px solid black;
 		width: 100%;
@@ -271,5 +288,23 @@
 	#modal p {
 		word-break: break-all;
 		white-space: normal;
+	}
+
+	#leave_current {
+		font-size: 16px;
+		padding: 5px;
+		border: 1px solid black;
+		border-radius: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		background-color: rgb(255, 228, 228);
+	}
+
+	#modal .small_button {
+		font-size: 14px;
+		padding: 5px;
+		border: 1px solid black;
+		border-radius: 5px;
+		background-color: white;
 	}
 </style>

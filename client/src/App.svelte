@@ -4,7 +4,7 @@
 	import Home from "./routes/Home.svelte";
 	import About from "./routes/About.svelte";
 	import Login from "./routes/Login.svelte";
-	import { validauthtoken, circles_data, uid } from "./store";
+	import { validauthtoken, circles_data, uid, owned_point } from "./store";
 	import { onMount } from "svelte";
 	export let url = "";
 
@@ -12,6 +12,8 @@
 		localStorage.setItem("auth-token", "");
 		$validauthtoken = "";
 		$circles_data = [];
+		$uid = "";
+		$owned_point = {};
 	}
 	onMount(async () => {
 		const auth_token = localStorage.getItem("auth-token");
