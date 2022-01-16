@@ -76,11 +76,11 @@
 				ctx.beginPath();
 				let modal = document.getElementById("modal");
 				if (p.current_occupied_user_id) {
-					ctx.fillStyle = "red";
-					modal.style.backgroundColor = "red";
+					ctx.fillStyle = "#FF2929";
+					// modal.style.backgroundColor = "#FF2929";
 				} else {
-					ctx.fillStyle = "green";
-					modal.style.backgroundColor = "green";
+					ctx.fillStyle = "#87D03A";
+					// modal.style.backgroundColor = "#87D03A";
 				}
 				ctx.fill(circle);
 				ctx.stroke();
@@ -236,7 +236,12 @@
 	{/if}
 
 	<canvas id="map" width="2000px" height="1000px" />
-	<div id="modal">
+	<div
+		id="modal"
+		style={`background-color: ${
+			$owned_point?._id ? "#FF2929" : "#87D03A"
+		}; color: ${$owned_point?._id ? "#fff" : "#000"};`}
+	>
 		<div class="modal-content">
 			{#if $circles_data}
 				{#if $circles_data[current_circle_index]?.current_occupied_user_id}
@@ -272,21 +277,21 @@
 		display: inline;
 	}
 	#modal {
-		color: white;
 		position: absolute;
 		/*top: 100px;
 		left: ;*/
 		display: none;
 		transform: translate(-50%, -50%);
 		width: 150px;
-		background-color: red;
 		padding: 10px;
 		border-radius: 5px;
+		border: 1px solid black;
 	}
 
 	#modal p {
 		word-break: break-all;
 		white-space: normal;
+		font-weight: bold;
 	}
 
 	#leave_current {
@@ -305,5 +310,6 @@
 		border: 1px solid black;
 		border-radius: 5px;
 		background-color: white;
+		margin-top: 3px;
 	}
 </style>
