@@ -1,7 +1,7 @@
 <main id="about">
 	<h2 id="title">About</h2>
 	<p class="explain">
-		Kinesis is a novel method of managing covid contact tracing, written for <a
+		Kinesis is a novel method of managing COVID contact tracing, written for <a
 			href="https://stuyhacks-xi.devpost.com/"
 			target="_blank"><i>StuyHacks XI</i></a
 		>. Instead of guessing where people are based on involuntary geolocation

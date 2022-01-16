@@ -283,7 +283,7 @@
 
 			{#if $whole_user.hasCovid}
 				<button id="report_covid" on:click={reportCovid}
-					>I have a negative covid test!</button
+					>I have a negative COVID test!</button
 				>
 				<div>
 					<h2>Oh no! Feel better!</h2>
@@ -301,7 +301,7 @@
 			{:else}
 				<div>
 					<button id="report_covid" on:click={reportCovid}
-						>I have a positive covid test!</button
+						>I have a positive COVID test!</button
 					>
 					{#if Object.keys($owned_point).length !== 0}
 						<div class="seat_info">
@@ -336,7 +336,7 @@
 
 		<h3>
 			What's the point of using Kinesis without an account? (you won't be
-			able to log where you're located or report your covid status!)
+			able to log where you're located or report your COVID status!)
 		</h3>
 	{/if}
 
