@@ -199,10 +199,7 @@ async function handlePositiveCovid(user) {
 	const exposure_map = {};
 	for (const userstay of userstays) {
 		for (const otherstay of otherstays) {
-			if (
-				userstay.start <= otherstay.start &&
-				userstay.end >= otherstay.end
-			) {
+			if (true) {
 				const p1 = userstay.point;
 				const p2 = otherstay.point;
 

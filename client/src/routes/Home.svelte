@@ -17,10 +17,23 @@
 		const paras = new URLSearchParams(search_str);
 		const update_param =
 			paras.get("update") || localStorage.getItem("update_param");
+		console.log("Update param: ", update_param);
 		localStorage.setItem("update_param", update_param); // even if falsy value
 		validauthtoken.subscribe(async (v) => {
 			let canvas = document.querySelector("#map");
 			if (v) {
+				// Get circles data
+				const r = await fetch(window.BASE_URL + "/api/db/get_points", {
+					method: "GET",
+					headers: {
+						"auth-token": $validauthtoken,
+					},
+				});
+
+				const rjson = (await r.json()).points;
+				$circles_data = rjson;
+				console.log("Circles data at first, ", $circles_data);
+
 				await get_current_occupication();
 				canvas.style.display = "block";
 				if (!$whole_user.hasCovid) {
@@ -28,6 +41,7 @@
 					const existing = $circles_data.findIndex(
 						(v) => v._id == update_param
 					);
+					console.log("Pre, ", existing, $circles_data);
 					if (existing > -1) {
 						console.log("made it");
 						if ($circles_data[existing].current_occupied_user_id) {
@@ -95,17 +109,9 @@
 			// 	{ x: 1000, y: 500, occupied: false },
 			// ];
 			// let circles_data = [];
-			const r = await fetch(window.BASE_URL + "/api/db/get_points", {
-				method: "GET",
-				headers: {
-					"auth-token": $validauthtoken,
-				},
-			});
-
-			const rjson = (await r.json()).points;
-			$circles_data = rjson;
 
 			circles_data.subscribe((new_circles_data) => {
+				console.log("new circles data", new_circles_data);
 				// ctx.clearRect(0, 0, canvas.width, canvas.height);
 				new_circles_data.forEach((p) => {
 					let circle = new Path2D();
@@ -114,9 +120,11 @@
 					circles.push(circle);
 					ctx.beginPath();
 					let modal = document.getElementById("modal");
-					if (p.current_occupied_user_id) {
-						ctx.fillStyle = "#FF2929";
+					if (p.current_occupied_user_id == $uid) {
+						ctx.fillStyle = "#00A1F2";
 						// modal.style.backgroundColor = "#FF2929";
+					} else if (p.current_occupied_user_id) {
+						ctx.fillStyle = "#FF2929";
 					} else {
 						ctx.fillStyle = "#87D03A";
 						// modal.style.backgroundColor = "#87D03A";
@@ -341,12 +349,7 @@
 	{/if}
 
 	<canvas id="map" width="2000px" height="1000px" />
-	<div
-		id="modal"
-		style={`background-color: ${
-			$owned_point?._id ? "#FF2929" : "#87D03A"
-		}; color: ${$owned_point?._id ? "#fff" : "#000"};`}
-	>
+	<div id="modal" style={`background-color: #D6D6D6; color: #000;`}>
 		<div class="modal-content">
 			{#if $circles_data}
 				{#if $circles_data[current_circle_index]?.current_occupied_user_id}
