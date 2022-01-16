@@ -5,12 +5,12 @@
 			href="https://stuyhacks-xi.devpost.com/"
 			target="_blank"><i>StuyHacks XI</i></a
 		>. Instead of guessing where people are based on involuntary geolocation
-		and wireless info, this app uses voluntary (but safe) information.
+		and wireless info, this app uses voluntary (but secure) information.
 		Rather than force people into being silently tracked, we offer them the
 		service and certainty of contact tracing combined with the convenience
 		of seating arrangements and reservations. We use industry standard
 		software libraries to provide consistent and reliable service, such as
-		e-mail notifcatications to potentially exposed indivudiduals.
+		e-mail notifications to potentially exposed individuals.
 	</p>
 	<p class="explain" id="source_code">
 		<a href="https://github.com/leomet07/kinesis/" target="_blank"
