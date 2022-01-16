@@ -272,6 +272,8 @@
 		margin: none;
 		border: 1px solid black;
 		width: 100%;
+		max-width: 1500px;
+		margin: auto;
 	}
 	.block {
 		display: inline;

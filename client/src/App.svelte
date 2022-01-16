@@ -4,8 +4,10 @@
 	import Home from "./routes/Home.svelte";
 	import About from "./routes/About.svelte";
 	import Login from "./routes/Login.svelte";
-	import { validauthtoken, circles_data, uid, owned_point } from "./store";
+	import { validauthtoken, uid } from "./store";
 	import { onMount } from "svelte";
+	import Navbar from "./components/Navbar.svelte";
+
 	export let url = "";
 
 	window.BASE_URL = "https://kinesisbackend.herokuapp.com";
@@ -20,13 +22,6 @@
 	console.log(window.BASE_URL);
 	console.log("window.dev: ", window.dev);
 
-	async function signout() {
-		localStorage.setItem("auth-token", "");
-		$validauthtoken = "";
-		$circles_data = [];
-		$uid = "";
-		$owned_point = {};
-	}
 	onMount(async () => {
 		const auth_token = localStorage.getItem("auth-token");
 		if (auth_token) {
@@ -51,15 +46,8 @@
 </script>
 
 <Router {url}>
-	<nav id="navbar">
-		<Link class="link" to="/">Home</Link>
-		<Link class="link" to="about">About</Link>
-		{#if $validauthtoken}
-			<span class="link" on:click={signout}>Sign out</span>
-		{:else}
-			<Link class="link" to="login">Login</Link>
-		{/if}
-	</nav>
+	<Navbar />
+	<meta name="robots" content="noindex, nofollow" />
 
 	<div id="render">
 		<Route path="about" component={About} />
@@ -71,28 +59,8 @@
 <style>
 	#render {
 		width: 100%;
-		height: 100%;
+		min-height: 90vh;
 		margin: 0px;
 		padding: 0px;
-	}
-	#navbar {
-		width: 100%;
-		text-align: center;
-		display: flex;
-		align-items: center;
-		justify-content: space-around;
-		padding-left: 30vw;
-		padding-right: 30vw;
-	}
-	#navbar .link {
-		text-decoration: underline;
-		cursor: pointer;
-	}
-	@media only screen and (max-width: 600px) {
-		#navbar {
-			justify-content: space-between;
-			padding-left: 10vw;
-			padding-right: 10vw;
-		}
 	}
 </style>
