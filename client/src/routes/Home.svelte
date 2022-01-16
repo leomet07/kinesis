@@ -240,18 +240,37 @@
 		let modal = document.getElementById("modal");
 		modal.style.display = "block";
 	}
+
+	async function reportCovid() {
+		const r = await fetch(window.BASE_URL + "/api/db/change_covid_status", {
+			method: "POST",
+			headers: {
+				"auth-token": $validauthtoken,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ covid_status: true }),
+		});
+
+		const rjson = await r.json();
+		if (rjson.updated_user) {
+			console.log("Covid Reported");
+		}
+	}
 </script>
 
 <main id="home">
-	<h2 class="title">Home</h2>
+	<!-- <h2 class="title">Home</h2> -->
 	{#if $validauthtoken}
 		<div>
-			<h2 class="block">
-				<span style="color:green">Logged in!</span>
-			</h2>
+			<h2 style="color:green">Logged in!</h2>
+			<button id="report_covid" on:click={reportCovid}
+				>Report Covid</button
+			>
 			{#if Object.keys($owned_point).length !== 0}
-				<div>
-					<h2>You are occupying a seat!</h2>
+				<div class="seat_info">
+					<h2>
+						You are currently occupying a seat in the resturant!
+					</h2>
 					<h2>
 						Occupied since: {new Date(
 							$owned_point.occupied_since
@@ -261,6 +280,13 @@
 						>Leave current point</button
 					>
 				</div>
+			{:else}
+				<div class="seat_info">
+					<h2>
+						You are not currently occupying a seat! Feel free to
+						book one!
+					</h2>
+				</div>
 			{/if}
 		</div>
 	{:else}
@@ -269,8 +295,9 @@
 		</h2>
 		<h3>
 			Since you aren't logged in, you won't be able to register where
-			you've been.
+			you're located or report your covid status!.
 		</h3>
+		<h3>So, what's the point of using Kinesis without an account?</h3>
 	{/if}
 
 	<canvas id="map" width="2000px" height="1000px" />
@@ -351,5 +378,19 @@
 		border-radius: 5px;
 		background-color: white;
 		margin-top: 3px;
+	}
+
+	.seat_info {
+		margin-bottom: 5px;
+	}
+
+	#report_covid {
+		background-color: rgb(255, 246, 198);
+		color: black;
+		border: 1px solid black;
+		border-radius: 5px;
+		padding: 5px;
+		margin-top: 5px;
+		margin-bottom: 2px;
 	}
 </style>

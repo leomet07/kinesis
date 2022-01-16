@@ -4,3 +4,4 @@ export const validauthtoken = writable("");
 export const uid = writable("");
 export const circles_data = writable([]);
 export const owned_point = writable({});
+export const whole_user = writable({});

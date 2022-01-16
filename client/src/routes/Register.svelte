@@ -1,19 +1,18 @@
 <script>
-	import { Link } from "svelte-routing";
-
 	import { validauthtoken } from "../store";
-
-	async function loginHandler() {
-		if (document.getElementById("error"))
+	async function registerHandler() {
+		if (document.getElementById("error")) {
 			// immediately remove any error messages from previous attempts
 			document.getElementById("error").remove();
+		}
 
-		console.log("Login!");
-		const email = document.getElementById("login_email").value;
-		const password = document.getElementById("login_password").value;
+		console.log("Register!");
+		const email = document.getElementById("register_email").value;
+		const password = document.getElementById("register_password").value;
+		const name = document.getElementById("register_name").value;
 
-		console.log({ email, password });
-		const r = await fetch(window.BASE_URL + "/api/auth/login", {
+		console.log({ email, password, name });
+		const r = await fetch(window.BASE_URL + "/api/auth/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -21,6 +20,7 @@
 			body: JSON.stringify({
 				email,
 				password,
+				name,
 			}),
 		});
 		console.log(r.status);
@@ -48,35 +48,36 @@
 	}
 </script>
 
-<main id="login">
+<main id="register">
 	{#if !$validauthtoken}
-		<h2 class="title">Login</h2>
-		<h3 id="register_refer">
-			<Link to="register"
-				>Don't have an account? Register for one here.</Link
-			>
-		</h3>
-		<form id="login_form" on:submit|preventDefault={loginHandler}>
+		<h2 class="title">Register</h2>
+		<form id="login_form" on:submit|preventDefault={registerHandler}>
+			<input
+				class="text_input"
+				type="text"
+				id="register_name"
+				placeholder="Full Name"
+				requried
+				name="name"
+			/>
 			<input
 				class="text_input"
 				type="email"
-				id="login_email"
+				id="register_email"
 				placeholder="Email"
 				requried
 				name="email"
-				autocomplete="off"
 			/>
 			<input
 				class="text_input"
 				type="password"
-				id="login_password"
+				id="register_password"
 				placeholder="Password"
 				required
 				name="password"
-				autocomplete="off"
 			/>
 
-			<input type="submit" id="submit" value="Log in" />
+			<input type="submit" id="submit" value="Register" />
 		</form>
 	{:else}
 		<h1>You are logged in!</h1>
@@ -86,7 +87,7 @@
 </main>
 
 <style>
-	#login {
+	#register {
 		text-align: center;
 	}
 
@@ -102,7 +103,7 @@
 	}
 
 	#submit {
-		width: 70px;
+		width: 90px;
 		font-size: 18px;
 		background-color: white;
 		color: black;

@@ -7,6 +7,7 @@
 	import { validauthtoken, uid } from "./store";
 	import { onMount } from "svelte";
 	import Navbar from "./components/Navbar.svelte";
+	import Register from "./routes/Register.svelte";
 
 	export let url = "";
 
@@ -51,6 +52,7 @@
 
 	<div id="render">
 		<Route path="about" component={About} />
+		<Route path="register" component={Register} />
 		<Route path="login" component={Login} />
 		<Route path="/"><Home /></Route>
 	</div>

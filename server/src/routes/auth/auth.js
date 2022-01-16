@@ -125,6 +125,7 @@ router.get("/verify/:id", async (req, res, next) => {
 			isAdmin: user.isAdmin,
 			uid: uid,
 			isApproved: user.isApproved,
+			user: user,
 		});
 	} catch (error) {
 		next(error);
