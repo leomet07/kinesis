@@ -6,12 +6,41 @@
 	// let owned_point = {};
 	const radius = 40;
 	onMount(async () => {
+		const search_str = window.location.search;
+		console.log("Early check", localStorage.getItem("update_param"));
+		const paras = new URLSearchParams(search_str);
+		const update_param =
+			paras.get("update") || localStorage.getItem("update_param");
+		localStorage.setItem("update_param", update_param); // even if falsy value
 		validauthtoken.subscribe(async (v) => {
 			let canvas = document.querySelector("#map");
 			if (v) {
 				await get_current_occupication();
 				canvas.style.display = "block";
-				init_canvas();
+				await init_canvas();
+
+				const existing = $circles_data.findIndex(
+					(v) => v._id == update_param
+				);
+				if (existing > -1) {
+					console.log("made it");
+					if ($circles_data[existing].current_occupied_user_id) {
+						console.log("Circle is occupied, was it me?");
+						if (
+							$circles_data[existing].current_occupied_user_id ==
+							$uid
+						) {
+							current_circle_index = existing;
+							await unoccupy();
+							localStorage.setItem("update_param", "");
+						}
+					} else {
+						console.log("Circle is not occupied");
+						current_circle_index = existing;
+						await occupy();
+						localStorage.setItem("update_param", "");
+					}
+				}
 			} else {
 				canvas.style.display = "none";
 			}
@@ -47,7 +76,7 @@
 		let ctx = canvas.getContext("2d");
 
 		let img = new Image();
-		img.src = "/img/background.png";
+		img.src = "/img/floorplan.jpg";
 		ctx.drawImage(img, 0, 0);
 
 		let circles = [];
@@ -146,22 +175,28 @@
 		console.log("Occupy");
 		const point = $circles_data[current_circle_index];
 		console.log(point);
+		const newpoint = await occupy_request(point._id);
+		$circles_data[current_circle_index] = newpoint;
+		$circles_data = $circles_data;
+		$owned_point = newpoint;
+		close_modal();
+	}
+	async function occupy_request(point_id) {
 		const r = await fetch(window.BASE_URL + "/api/db/occupy_point", {
 			method: "POST",
 			headers: {
 				"auth-token": $validauthtoken,
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ point_id: point._id }),
+			body: JSON.stringify({ point_id: point_id }),
 		});
 		const rjson = await r.json();
 		if (rjson.success) {
 			const newpoint = rjson.updated;
-			$circles_data[current_circle_index] = newpoint;
-			$circles_data = $circles_data;
-			$owned_point = newpoint;
+			return newpoint;
+		} else {
+			return null;
 		}
-		close_modal();
 	}
 	async function unoccupy() {
 		console.log("Unoccupy");
@@ -205,7 +240,7 @@
 </script>
 
 <main id="home">
-	<h1 class="title">Home</h1>
+	<h2 class="title">Home</h2>
 	{#if $validauthtoken}
 		<div>
 			<h2 class="block">
@@ -230,7 +265,7 @@
 			<span style="color:red">Not logged in!</span>
 		</h2>
 		<h3>
-			Since you are not logged in, you won't be able to register where
+			Since you aren't logged in, you won't be able to register where
 			you've been.
 		</h3>
 	{/if}

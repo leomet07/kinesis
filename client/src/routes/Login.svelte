@@ -47,7 +47,7 @@
 
 <main>
 	{#if !$validauthtoken}
-		<h1>Login</h1>
+		<h2>Login</h2>
 		<form on:submit|preventDefault={loginHandler}>
 			<input type="email" id="login_email" placeholder="email" />
 			<input type="password" id="login_password" placeholder="password" />

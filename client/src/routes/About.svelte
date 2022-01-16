@@ -1,5 +1,5 @@
 <main id="about">
-	<h1 id="title">About</h1>
+	<h2 id="title">About</h2>
 	<p class="explain">
 		Kinesis is a novel method of managing covid contact tracing, written for <a
 			href="https://stuyhacks-xi.devpost.com/"
