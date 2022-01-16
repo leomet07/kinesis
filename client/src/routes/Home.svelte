@@ -302,6 +302,10 @@
 						>
 					</h2>
 					<h2>
+						We have notified other people that were near you and may
+						have possibly been exposed!
+					</h2>
+					<h2>
 						You may continue using Kinesis after a negative covid
 						test and your recovery!
 					</h2>
